@@ -1,8 +1,137 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "หน้าแรก";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@if (ViewBag.Sliders != null && ViewBag.Sliders.Count > 0)
+{
+    <div id="carouselSlider" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < ViewBag.Sliders.Count; i++)
+            {
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <img src="@ViewBag.Sliders[i].ImageUrl" class="d-block w-100" alt="@ViewBag.Sliders[i].Title" style="max-height: 400px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>@ViewBag.Sliders[i].Title</h5>
+                        <p>@ViewBag.Sliders[i].Description</p>
+                    </div>
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselSlider" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselSlider" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+        </button>
+    </div>
+}
+
+<div class="row mb-4">
+    <div class="col-12 text-center">
+        <h2>ยินดีต้อนรับสู่ระบบจองห้องพัก</h2>
+        <p class="lead">จองห้องพักได้ทั้งรายวันและรายเดือน ง่าย สะดวก รวดเร็ว</p>
+        <a asp-controller="Booking" asp-action="Index" class="btn btn-primary btn-lg">
+            <i class="fas fa-calendar-alt"></i> จองห้องพักเลย
+        </a>
+    </div>
 </div>
+
+@if (ViewBag.Promotions != null && ViewBag.Promotions.Count > 0)
+{
+    <section class="mb-5">
+        <h3 class="mb-3"><i class="fas fa-tags"></i> โปรโมชั่นพิเศษ</h3>
+        <div class="row">
+            @foreach (var promo in ViewBag.Promotions)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(promo.ImageUrl))
+                        {
+                            <img src="@promo.ImageUrl" class="card-img-top" alt="@promo.Title" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@promo.Title</h5>
+                            <p class="card-text">@promo.Description</p>
+                            <p class="text-primary">
+                                <strong>ส่วนลด @promo.DiscountPercentage%</strong>
+                            </p>
+                            <p class="text-muted small">
+                                ใช้ได้ถึง @promo.EndDate.ToString("dd/MM/yyyy")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center">
+            <a asp-action="Promotions" class="btn btn-outline-primary">ดูโปรโมชั่นทั้งหมด</a>
+        </div>
+    </section>
+}
+
+@if (ViewBag.Rooms != null && ViewBag.Rooms.Count > 0)
+{
+    <section class="mb-5">
+        <h3 class="mb-3"><i class="fas fa-bed"></i> ห้องพักของเรา</h3>
+        <div class="row">
+            @foreach (var room in ViewBag.Rooms)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(room.ImageUrl))
+                        {
+                            <img src="@room.ImageUrl" class="card-img-top" alt="@room.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@room.Name</h5>
+                            <p class="card-text">@room.Description</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted">รายวัน</small><br>
+                                    <strong>@room.DailyRate.ToString("N0") บาท</strong>
+                                </div>
+                                <div>
+                                    <small class="text-muted">รายเดือน</small><br>
+                                    <strong>@room.MonthlyRate.ToString("N0") บาท</strong>
+                                </div>
+                            </div>
+                            <a asp-controller="Booking" asp-action="Details" asp-route-id="@room.Id" class="btn btn-primary btn-sm mt-2 w-100">
+                                <i class="fas fa-info-circle"></i> ดูรายละเอียด
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center">
+            <a asp-controller="Booking" asp-action="Index" class="btn btn-outline-primary">ดูห้องพักทั้งหมด</a>
+        </div>
+    </section>
+}
+
+<section class="bg-light py-5 mt-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-hotel fa-3x text-primary mb-3"></i>
+                <h5>ห้องพักสะดวกสบาย</h5>
+                <p>ห้องพักที่ทันสมัยและสะอาด</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-calendar-check fa-3x text-primary mb-3"></i>
+                <h5>จองง่าย</h5>
+                <p>ระบบจองออนไลน์ที่ใช้งานง่าย</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                <h5>ปลอดภัย</h5>
+                <p>ระบบรักษาความปลอดภัยสูง</p>
+            </div>
+            <div class="col-md-3 mb-3">
+                <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                <h5>บริการดี</h5>
+                <p>ทีมงานพร้อมให้บริการตลอด 24 ชั่วโมง</p>
+            </div>
+        </div>
+    </div>
+</section>

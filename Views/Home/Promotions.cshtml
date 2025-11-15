@@ -1,0 +1,54 @@
+@model IEnumerable<RoomReservationSystem.Models.Promotion>
+@{
+    ViewData["Title"] = "โปรโมชั่น";
+}
+
+<h2 class="mb-4">
+    <i class="fas fa-tags"></i> โปรโมชั่นพิเศษ
+</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var promo in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(promo.ImageUrl))
+                    {
+                        <img src="@promo.ImageUrl" class="card-img-top" alt="@promo.Title" style="height: 250px; object-fit: cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@promo.Title</h5>
+                        <p class="card-text">@promo.Description</p>
+                        <div class="alert alert-success">
+                            <strong>ส่วนลด @promo.DiscountPercentage%</strong>
+                            @if (promo.DiscountAmount.HasValue)
+                            {
+                                <br>
+                                <span>หรือ @promo.DiscountAmount.Value.ToString("N0") บาท</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(promo.PromoCode))
+                        {
+                            <p>
+                                <strong>รหัสโปรโมชั่น:</strong>
+                                <span class="badge bg-primary">@promo.PromoCode</span>
+                            </p>
+                        }
+                        <p class="text-muted small">
+                            <i class="fas fa-calendar"></i>
+                            ใช้ได้ตั้งแต่ @promo.StartDate.ToString("dd/MM/yyyy") ถึง @promo.EndDate.ToString("dd/MM/yyyy")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> ขณะนี้ยังไม่มีโปรโมชั่น
+    </div>
+}
