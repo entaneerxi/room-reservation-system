@@ -1,0 +1,107 @@
+@model RoomReservationSystem.Models.Room
+@{
+    ViewData["Title"] = "เพิ่มห้องพัก";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">เพิ่มห้องพัก</h3>
+            </div>
+            <form asp-action="Create" method="post" enctype="multipart/form-data">
+                <div class="card-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label asp-for="Description"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="RoomType"></label>
+                                <select asp-for="RoomType" class="form-control">
+                                    <option value="Standard">Standard</option>
+                                    <option value="Deluxe">Deluxe</option>
+                                    <option value="Suite">Suite</option>
+                                </select>
+                                <span asp-validation-for="RoomType" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Capacity"></label>
+                                <input asp-for="Capacity" class="form-control" type="number" min="1" />
+                                <span asp-validation-for="Capacity" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DailyRate"></label>
+                                <input asp-for="DailyRate" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="DailyRate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="MonthlyRate"></label>
+                                <input asp-for="MonthlyRate" class="form-control" type="number" step="0.01" />
+                                <span asp-validation-for="MonthlyRate" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>รูปภาพห้องพัก</label>
+                        <div class="custom-file">
+                            <input type="file" name="imageFile" class="custom-file-input" id="imageFile" accept="image/*">
+                            <label class="custom-file-label" for="imageFile">เลือกไฟล์</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input asp-for="IsAvailable" class="custom-control-input" id="isAvailable" />
+                            <label class="custom-control-label" for="isAvailable">ห้องว่าง</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> บันทึก
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> ยกเลิก
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function(){
+            $('.custom-file-input').on('change', function(){
+                var fileName = $(this).val().split('\\').pop();
+                $(this).next('.custom-file-label').html(fileName);
+            });
+        });
+    </script>
+}

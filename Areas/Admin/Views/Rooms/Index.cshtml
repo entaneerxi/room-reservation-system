@@ -1,0 +1,86 @@
+@model IEnumerable<RoomReservationSystem.Models.Room>
+@{
+    ViewData["Title"] = "จัดการห้องพัก";
+}
+
+<div class="row mb-3">
+    <div class="col-12">
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> เพิ่มห้องพัก
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>รูปภาพ</th>
+                    <th>ชื่อห้อง</th>
+                    <th>ประเภท</th>
+                    <th>ความจุ</th>
+                    <th>ราคารายวัน</th>
+                    <th>ราคารายเดือน</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var room in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(room.ImageUrl))
+                                {
+                                    <img src="@room.ImageUrl" alt="@room.Name" style="width: 80px; height: 60px; object-fit: cover;">
+                                }
+                                else
+                                {
+                                    <div class="bg-secondary text-white text-center" style="width: 80px; height: 60px; line-height: 60px;">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>@room.Name</td>
+                            <td>@room.RoomType</td>
+                            <td>@room.Capacity คน</td>
+                            <td>@room.DailyRate.ToString("N0") บาท</td>
+                            <td>@room.MonthlyRate.ToString("N0") บาท</td>
+                            <td>
+                                @if (room.IsAvailable)
+                                {
+                                    <span class="badge badge-success">ว่าง</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">ไม่ว่าง</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Edit" asp-route-id="@room.Id" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form asp-action="Delete" asp-route-id="@room.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('คุณต้องการลบห้องพักนี้?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">ไม่มีข้อมูล</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

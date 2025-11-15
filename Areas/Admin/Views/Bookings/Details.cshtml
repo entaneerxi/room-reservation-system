@@ -1,0 +1,164 @@
+@model RoomReservationSystem.Models.Booking
+@{
+    ViewData["Title"] = "รายละเอียดการจอง";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">ข้อมูลการจอง #@Model.Id</h3>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">ลูกค้า:</dt>
+                    <dd class="col-sm-8">@Model.User?.FirstName @Model.User?.LastName</dd>
+                    
+                    <dt class="col-sm-4">อีเมล:</dt>
+                    <dd class="col-sm-8">@Model.User?.Email</dd>
+                    
+                    <dt class="col-sm-4">เบอร์โทร:</dt>
+                    <dd class="col-sm-8">@Model.User?.PhoneNumber</dd>
+                    
+                    <dt class="col-sm-4">ห้องพัก:</dt>
+                    <dd class="col-sm-8">@Model.Room?.Name</dd>
+                    
+                    <dt class="col-sm-4">วันเข้าพัก:</dt>
+                    <dd class="col-sm-8">@Model.CheckInDate.ToString("dd/MM/yyyy")</dd>
+                    
+                    <dt class="col-sm-4">วันออก:</dt>
+                    <dd class="col-sm-8">@Model.CheckOutDate.ToString("dd/MM/yyyy")</dd>
+                    
+                    <dt class="col-sm-4">ประเภทการจอง:</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.BookingType == "Daily")
+                        {
+                            <span class="badge badge-info">รายวัน</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-success">รายเดือน</span>
+                        }
+                    </dd>
+                    
+                    @if (Model.Promotion != null)
+                    {
+                        <dt class="col-sm-4">โปรโมชั่น:</dt>
+                        <dd class="col-sm-8">@Model.Promotion.Title (ส่วนลด @Model.DiscountAmount?.ToString("N0") บาท)</dd>
+                    }
+                    
+                    <dt class="col-sm-4">ยอดเงิน:</dt>
+                    <dd class="col-sm-8"><h4 class="text-primary">@Model.TotalAmount.ToString("N0") บาท</h4></dd>
+                    
+                    <dt class="col-sm-4">สถานะการชำระเงิน:</dt>
+                    <dd class="col-sm-8">
+                        @if (Model.PaymentConfirmed)
+                        {
+                            <span class="badge badge-success">ยืนยันแล้ว</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warning">รอยืนยัน</span>
+                        }
+                    </dd>
+                    
+                    <dt class="col-sm-4">สถานะการจอง:</dt>
+                    <dd class="col-sm-8">
+                        @switch (Model.Status)
+                        {
+                            case "Pending":
+                                <span class="badge badge-warning">รอดำเนินการ</span>
+                                break;
+                            case "Confirmed":
+                                <span class="badge badge-primary">ยืนยันแล้ว</span>
+                                break;
+                            case "CheckedIn":
+                                <span class="badge badge-success">เช็คอินแล้ว</span>
+                                break;
+                            case "CheckedOut":
+                                <span class="badge badge-secondary">เช็คเอาท์แล้ว</span>
+                                break;
+                            case "Cancelled":
+                                <span class="badge badge-danger">ยกเลิก</span>
+                                break;
+                        }
+                    </dd>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <dt class="col-sm-4">หมายเหตุ:</dt>
+                        <dd class="col-sm-8">@Model.Notes</dd>
+                    }
+                    
+                    <dt class="col-sm-4">วันที่จอง:</dt>
+                    <dd class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">จัดการการจอง</h3>
+            </div>
+            <div class="card-body">
+                @if (!Model.PaymentConfirmed && Model.Status == "Pending")
+                {
+                    <form asp-action="ConfirmPayment" asp-route-id="@Model.Id" method="post" class="mb-2">
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-check"></i> ยืนยันการชำระเงิน
+                        </button>
+                    </form>
+                }
+                
+                @if (Model.PaymentConfirmed && Model.Status == "Pending")
+                {
+                    <form asp-action="ConfirmBooking" asp-route-id="@Model.Id" method="post" class="mb-2">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-check-circle"></i> ยืนยันการจอง
+                        </button>
+                    </form>
+                }
+                
+                @if (Model.Status == "Confirmed")
+                {
+                    <form asp-action="CheckIn" asp-route-id="@Model.Id" method="post" class="mb-2">
+                        <button type="submit" class="btn btn-info btn-block">
+                            <i class="fas fa-sign-in-alt"></i> เช็คอิน
+                        </button>
+                    </form>
+                }
+                
+                @if (Model.Status == "CheckedIn")
+                {
+                    <form asp-action="CheckOut" asp-route-id="@Model.Id" method="post" class="mb-2">
+                        <button type="submit" class="btn btn-warning btn-block">
+                            <i class="fas fa-sign-out-alt"></i> เช็คเอาท์
+                        </button>
+                    </form>
+                }
+                
+                <a asp-action="Index" class="btn btn-secondary btn-block">
+                    <i class="fas fa-arrow-left"></i> กลับ
+                </a>
+            </div>
+        </div>
+        
+        @if (Model.ActualCheckInDate.HasValue)
+        {
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h3 class="card-title">ข้อมูลเพิ่มเติม</h3>
+                </div>
+                <div class="card-body">
+                    <p><strong>เช็คอินจริง:</strong><br>@Model.ActualCheckInDate.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                    @if (Model.ActualCheckOutDate.HasValue)
+                    {
+                        <p><strong>เช็คเอาท์จริง:</strong><br>@Model.ActualCheckOutDate.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
