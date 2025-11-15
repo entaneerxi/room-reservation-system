@@ -1,0 +1,90 @@
+@model RoomReservationSystem.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "เลื่อนการจอง";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-edit"></i> เลื่อนการจอง: @Model.Room?.Name
+                </h3>
+                
+                <form asp-action="Reschedule" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="RoomId" />
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> คุณสามารถเลื่อนวันเข้าพักและวันออกได้
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CheckInDate" class="form-label"></label>
+                            <input asp-for="CheckInDate" class="form-control" type="date" />
+                            <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CheckOutDate" class="form-label"></label>
+                            <input asp-for="CheckOutDate" class="form-control" type="date" />
+                            <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">ประเภทการจอง</label>
+                        <p class="form-control-plaintext">
+                            @if (Model.BookingType == "Daily")
+                            {
+                                <span class="badge bg-info">รายวัน</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">รายเดือน</span>
+                            }
+                        </p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="หมายเหตุเพิ่มเติม"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-save"></i> บันทึกการเปลี่ยนแปลง
+                        </button>
+                        <a asp-action="MyBookings" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> ยกเลิก
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Set minimum date to tomorrow
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
+        
+        document.getElementById('CheckInDate').setAttribute('min', minDate);
+        document.getElementById('CheckOutDate').setAttribute('min', minDate);
+        
+        // Update checkout min date when checkin changes
+        document.getElementById('CheckInDate').addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            checkinDate.setDate(checkinDate.getDate() + 1);
+            const minCheckout = checkinDate.toISOString().split('T')[0];
+            document.getElementById('CheckOutDate').setAttribute('min', minCheckout);
+        });
+    </script>
+}
