@@ -1,0 +1,142 @@
+@model RoomReservationSystem.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "จองห้องพัก";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-body">
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-calendar-check"></i> จองห้องพัก: @Model.Room?.Name
+                </h3>
+                
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                    <input type="hidden" asp-for="RoomId" />
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CheckInDate" class="form-label"></label>
+                            <input asp-for="CheckInDate" class="form-control" type="date" />
+                            <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CheckOutDate" class="form-label"></label>
+                            <input asp-for="CheckOutDate" class="form-control" type="date" />
+                            <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="BookingType" class="form-label"></label>
+                        <select asp-for="BookingType" class="form-select">
+                            <option value="Daily">รายวัน (@Model.Room?.DailyRate.ToString("N0") บาท/วัน)</option>
+                            <option value="Monthly">รายเดือน (@Model.Room?.MonthlyRate.ToString("N0") บาท/เดือน)</option>
+                        </select>
+                        <span asp-validation-for="BookingType" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="PromoCode" class="form-label"></label>
+                        <div class="input-group">
+                            <input asp-for="PromoCode" class="form-control" placeholder="กรอกรหัสโปรโมชั่น (ถ้ามี)" />
+                            <button type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-check"></i> ตรวจสอบ
+                            </button>
+                        </div>
+                        <span asp-validation-for="PromoCode" class="text-danger"></span>
+                    </div>
+                    
+                    @if (Model.AvailableOptions != null && Model.AvailableOptions.Any())
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">ตัวเลือกเพิ่มเติม</label>
+                            @foreach (var option in Model.AvailableOptions)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="SelectedAdditionalOptions" value="@option.Id" id="option@(option.Id)">
+                                    <label class="form-check-label" for="option@(option.Id)">
+                                        @option.Name - @option.Price.ToString("N0") บาท
+                                        @if (!string.IsNullOrEmpty(option.Description))
+                                        {
+                                            <small class="text-muted">(@option.Description)</small>
+                                        }
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    }
+                    
+                    <div class="mb-3">
+                        <label asp-for="Notes" class="form-label"></label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="หมายเหตุเพิ่มเติม"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calendar-check"></i> ยืนยันการจอง
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> ยกเลิก
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title">รายละเอียดห้องพัก</h5>
+                @if (!string.IsNullOrEmpty(Model.Room?.ImageUrl))
+                {
+                    <img src="@Model.Room.ImageUrl" class="card-img-top mb-3" alt="@Model.Room.Name" style="max-height: 200px; object-fit: cover;">
+                }
+                <p><strong>ห้อง:</strong> @Model.Room?.Name</p>
+                <p><strong>ประเภท:</strong> @Model.Room?.RoomType</p>
+                <p><strong>รองรับ:</strong> @Model.Room?.Capacity คน</p>
+                <hr>
+                <p><strong>ราคารายวัน:</strong> @Model.Room?.DailyRate.ToString("N0") บาท</p>
+                <p><strong>ราคารายเดือน:</strong> @Model.Room?.MonthlyRate.ToString("N0") บาท</p>
+            </div>
+        </div>
+        
+        <div class="card shadow bg-light">
+            <div class="card-body">
+                <h5 class="card-title">คำแนะนำ</h5>
+                <ul class="small mb-0">
+                    <li>กรุณาตรวจสอบวันที่ให้ถูกต้อง</li>
+                    <li>สามารถใช้รหัสโปรโมชั่นเพื่อรับส่วนลด</li>
+                    <li>ชำระเงินภายใน 24 ชั่วโมง</li>
+                    <li>สามารถเลื่อนการจองได้ก่อนวันเข้าพัก 48 ชั่วโมง</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Set minimum date to tomorrow
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
+        
+        document.getElementById('CheckInDate').setAttribute('min', minDate);
+        document.getElementById('CheckOutDate').setAttribute('min', minDate);
+        
+        // Update checkout min date when checkin changes
+        document.getElementById('CheckInDate').addEventListener('change', function() {
+            const checkinDate = new Date(this.value);
+            checkinDate.setDate(checkinDate.getDate() + 1);
+            const minCheckout = checkinDate.toISOString().split('T')[0];
+            document.getElementById('CheckOutDate').setAttribute('min', minCheckout);
+        });
+    </script>
+}

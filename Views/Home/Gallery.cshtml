@@ -1,0 +1,36 @@
+@model IEnumerable<RoomReservationSystem.Models.Gallery>
+@{
+    ViewData["Title"] = "ภาพบรรยากาศ";
+}
+
+<h2 class="mb-4">
+    <i class="fas fa-images"></i> ภาพบรรยากาศ
+</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@item.ImageUrl" class="card-img-top" alt="@item.Title" style="height: 250px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Title</h5>
+                        @if (!string.IsNullOrEmpty(item.Description))
+                        {
+                            <p class="card-text text-muted">@item.Description</p>
+                        }
+                        <span class="badge bg-secondary">@item.Category</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> ยังไม่มีภาพบรรยากาศ
+    </div>
+}

@@ -1,0 +1,93 @@
+@model RoomReservationSystem.Models.ContactInfo
+@{
+    ViewData["Title"] = "ติดต่อเรา";
+}
+
+<h2 class="mb-4">
+    <i class="fas fa-phone"></i> ติดต่อเรา
+</h2>
+
+@if (Model != null)
+{
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-building"></i> @Model.Name
+                    </h5>
+                    
+                    <p>
+                        <i class="fas fa-map-marker-alt text-primary"></i>
+                        <strong>ที่อยู่:</strong><br>
+                        @Model.Address
+                    </p>
+                    
+                    <p>
+                        <i class="fas fa-phone text-primary"></i>
+                        <strong>โทรศัพท์:</strong><br>
+                        <a href="tel:@Model.Phone">@Model.Phone</a>
+                    </p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <p>
+                            <i class="fas fa-envelope text-primary"></i>
+                            <strong>อีเมล:</strong><br>
+                            <a href="mailto:@Model.Email">@Model.Email</a>
+                        </p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.Line))
+                    {
+                        <p>
+                            <i class="fab fa-line text-success"></i>
+                            <strong>Line ID:</strong><br>
+                            @Model.Line
+                        </p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.Facebook))
+                    {
+                        <p>
+                            <i class="fab fa-facebook text-primary"></i>
+                            <strong>Facebook:</strong><br>
+                            <a href="@Model.Facebook" target="_blank">@Model.Facebook</a>
+                        </p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.WorkingHours))
+                    {
+                        <p>
+                            <i class="fas fa-clock text-primary"></i>
+                            <strong>เวลาทำการ:</strong><br>
+                            @Model.WorkingHours
+                        </p>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            @if (!string.IsNullOrEmpty(Model.MapUrl))
+            {
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            <i class="fas fa-map"></i> แผนที่
+                        </h5>
+                        <div class="ratio ratio-16x9">
+                            <iframe src="@Model.MapUrl" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> ข้อมูลการติดต่อกำลังอัปเดต
+    </div>
+}

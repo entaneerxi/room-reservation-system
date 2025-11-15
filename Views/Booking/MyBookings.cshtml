@@ -1,0 +1,95 @@
+@model IEnumerable<RoomReservationSystem.Models.Booking>
+@{
+    ViewData["Title"] = "การจองของฉัน";
+}
+
+<h2 class="mb-4">
+    <i class="fas fa-calendar-check"></i> การจองของฉัน
+</h2>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>หมายเลขการจอง</th>
+                    <th>ห้องพัก</th>
+                    <th>วันเข้าพัก</th>
+                    <th>วันออก</th>
+                    <th>ประเภท</th>
+                    <th>ยอดรวม</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var booking in Model)
+                {
+                    <tr>
+                        <td>#@booking.Id</td>
+                        <td>@booking.Room?.Name</td>
+                        <td>@booking.CheckInDate.ToString("dd/MM/yyyy")</td>
+                        <td>@booking.CheckOutDate.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (booking.BookingType == "Daily")
+                            {
+                                <span class="badge bg-info">รายวัน</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">รายเดือน</span>
+                            }
+                        </td>
+                        <td>@booking.TotalAmount.ToString("N0") บาท</td>
+                        <td>
+                            @switch (booking.Status)
+                            {
+                                case "Pending":
+                                    <span class="badge bg-warning">รอดำเนินการ</span>
+                                    break;
+                                case "Confirmed":
+                                    <span class="badge bg-primary">ยืนยันแล้ว</span>
+                                    break;
+                                case "CheckedIn":
+                                    <span class="badge bg-success">เช็คอินแล้ว</span>
+                                    break;
+                                case "CheckedOut":
+                                    <span class="badge bg-secondary">เช็คเอาท์แล้ว</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="badge bg-danger">ยกเลิกแล้ว</span>
+                                    break;
+                                default:
+                                    <span class="badge bg-light text-dark">@booking.Status</span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                @if (booking.Status == "Pending" || booking.Status == "Confirmed")
+                                {
+                                    <a asp-action="Reschedule" asp-route-id="@booking.Id" class="btn btn-sm btn-warning" title="เลื่อนการจอง">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form asp-action="Cancel" asp-route-id="@booking.Id" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('คุณต้องการยกเลิกการจองนี้?')" title="ยกเลิก">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> คุณยังไม่มีการจอง
+        <a asp-action="Index" class="alert-link">เริ่มจองห้องพักเลย</a>
+    </div>
+}

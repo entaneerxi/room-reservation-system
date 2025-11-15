@@ -1,0 +1,97 @@
+@model RoomReservationSystem.Models.Room
+@{
+    ViewData["Title"] = "รายละเอียดห้องพัก";
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Name" style="max-height: 400px; object-fit: cover;">
+            }
+            <div class="card-body">
+                <h2 class="card-title">@Model.Name</h2>
+                <p class="text-muted">@Model.RoomType</p>
+                
+                <hr>
+                
+                <h5>รายละเอียด</h5>
+                <p>@Model.Description</p>
+                
+                <h5>ข้อมูลห้องพัก</h5>
+                <ul>
+                    <li><i class="fas fa-users text-primary"></i> รองรับผู้เข้าพัก: @Model.Capacity คน</li>
+                    <li><i class="fas fa-door-open text-primary"></i> ประเภทห้อง: @Model.RoomType</li>
+                    <li>
+                        @if (Model.IsAvailable)
+                        {
+                            <i class="fas fa-check-circle text-success"></i> <span class="text-success">ห้องว่าง</span>
+                        }
+                        else
+                        {
+                            <i class="fas fa-times-circle text-danger"></i> <span class="text-danger">ไม่ว่าง</span>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title text-center">ราคาห้องพัก</h5>
+                
+                <div class="text-center mb-3">
+                    <h3 class="text-primary">@Model.DailyRate.ToString("N0") บาท</h3>
+                    <small class="text-muted">รายวัน</small>
+                </div>
+                
+                <div class="text-center mb-3">
+                    <h3 class="text-success">@Model.MonthlyRate.ToString("N0") บาท</h3>
+                    <small class="text-muted">รายเดือน</small>
+                </div>
+                
+                <hr>
+                
+                @if (Model.IsAvailable)
+                {
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <a asp-action="Create" asp-route-roomId="@Model.Id" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-calendar-check"></i> จองห้องนี้
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Create", new { roomId = Model.Id })" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-sign-in-alt"></i> เข้าสู่ระบบเพื่อจอง
+                        </a>
+                    }
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-lg w-100" disabled>
+                        <i class="fas fa-ban"></i> ห้องไม่ว่าง
+                    </button>
+                }
+                
+                <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">
+                    <i class="fas fa-arrow-left"></i> ดูห้องพักอื่น
+                </a>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-body">
+                <h5 class="card-title">ติดต่อสอบถาม</h5>
+                <p class="small">
+                    <i class="fas fa-phone text-primary"></i> โทร: 02-123-4567<br>
+                    <i class="fab fa-line text-success"></i> Line: @@roomreservation<br>
+                    <i class="fas fa-envelope text-primary"></i> Email: info@@roomreservation.com
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
