@@ -59,42 +59,18 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Seed default admin user and roles
+// Seed database with default data
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        // Run migrations automatically
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
         
-        // Create roles
-        string[] roleNames = { "Admin", "Staff", "Member" };
-        foreach (var roleName in roleNames)
-        {
-            if (!await roleManager.RoleExistsAsync(roleName))
-            {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
-            }
-        }
-        
-        // Create default admin user
-        var adminEmail = "admin@roomreservation.com";
-        var adminUser = await userManager.FindByEmailAsync(adminEmail);
-        if (adminUser == null)
-        {
-            adminUser = new ApplicationUser
-            {
-                UserName = adminEmail,
-                Email = adminEmail,
-                FirstName = "Admin",
-                LastName = "User",
-                EmailConfirmed = true,
-                CreatedAt = DateTime.Now
-            };
-            await userManager.CreateAsync(adminUser, "Admin@123");
-            await userManager.AddToRoleAsync(adminUser, "Admin");
-        }
+        // Seed initial data
+        await DbSeeder.SeedAsync(services);
     }
     catch (Exception ex)
     {
