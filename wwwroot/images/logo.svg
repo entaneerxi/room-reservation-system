@@ -1,0 +1,27 @@
+<svg width="150" height="40" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .logo-text { 
+        font-family: Arial, sans-serif; 
+        font-weight: bold; 
+        fill: white; 
+      }
+      .logo-icon { 
+        fill: white; 
+      }
+    </style>
+  </defs>
+  
+  <!-- Hotel/Building Icon -->
+  <rect class="logo-icon" x="2" y="10" width="28" height="24" rx="2" fill="none" stroke="white" stroke-width="2"/>
+  <rect class="logo-icon" x="7" y="14" width="4" height="4"/>
+  <rect class="logo-icon" x="15" y="14" width="4" height="4"/>
+  <rect class="logo-icon" x="23" y="14" width="4" height="4"/>
+  <rect class="logo-icon" x="7" y="21" width="4" height="4"/>
+  <rect class="logo-icon" x="15" y="21" width="4" height="4"/>
+  <rect class="logo-icon" x="23" y="21" width="4" height="4"/>
+  <rect class="logo-icon" x="13" y="28" width="6" height="6"/>
+  
+  <!-- Text: RoomBooking -->
+  <text class="logo-text" x="36" y="26" font-size="20">RoomBooking</text>
+</svg>
