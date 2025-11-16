@@ -95,7 +95,7 @@ dotnet run
 5. Open your browser and navigate to `https://localhost:5001` or the port shown in the console
 
 ### Default Admin Credentials
-- **Email:** admin@roomreservation.com
+- **Email:** admin@roombooking.com
 - **Password:** Admin@123
 
 ### Project Structure
